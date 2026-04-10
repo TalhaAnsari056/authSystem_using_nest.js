@@ -1,0 +1,367 @@
+{
+  "info": {
+    "_postman_id": "course-crud-api",
+    "name": "Course CRUD API Tests",
+    "description": "Complete CRUD testing for Course Management System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1️⃣ Auth - Register Admin",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin_user\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"Admin@123456\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/register",
+          "host": ["{{base_url}}"],
+          "path": ["auth", "register"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "pm.environment.set(\"token\", jsonData.access_token);",
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"Token exists\", function () {",
+              "    pm.expect(jsonData).to.have.property('access_token');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "2️⃣ Auth - Get Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/auth/profile",
+          "host": ["{{base_url}}"],
+          "path": ["auth", "profile"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response has user data\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('id');",
+              "    pm.expect(jsonData).to.have.property('username');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3️⃣ Course - Create (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"courseName\": \"Advanced Node.js Mastery\",\n  \"description\": \"Master advanced concepts in Node.js including streams, clustering, and performance optimization strategies\",\n  \"level\": \"Advanced\",\n  \"price\": 99.99\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/courses",
+          "host": ["{{base_url}}"],
+          "path": ["courses"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "pm.environment.set(\"courseId\", jsonData.data._id);",
+              "pm.test(\"Status code is 201\", function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test(\"Course created successfully\", function () {",
+              "    pm.expect(jsonData.message).to.equal('Course created successfully');",
+              "});",
+              "pm.test(\"Course has correct structure\", function () {",
+              "    pm.expect(jsonData.data).to.have.property('_id');",
+              "    pm.expect(jsonData.data).to.have.property('courseName');",
+              "    pm.expect(jsonData.data.level).to.equal('Advanced');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "4️⃣ Course - Get All (Public)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/courses",
+          "host": ["{{base_url}}"],
+          "path": ["courses"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Response has count\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('count');",
+              "});",
+              "pm.test(\"Response is array\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.data).to.be.an('array');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "5️⃣ Course - Get By ID (Public)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/courses/{{courseId}}",
+          "host": ["{{base_url}}"],
+          "path": ["courses", "{{courseId}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Course retrieved successfully\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.data._id).to.equal(pm.environment.get('courseId'));",
+              "    pm.expect(jsonData.data).to.have.property('courseName');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "6️⃣ Course - Update (Admin)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"price\": 149.99,\n  \"courseName\": \"Advanced Node.js Mastery - Updated\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/courses/{{courseId}}",
+          "host": ["{{base_url}}"],
+          "path": ["courses", "{{courseId}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Course updated successfully\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.message).to.equal('Course updated successfully');",
+              "    pm.expect(jsonData.data.price).to.equal(149.99);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "7️⃣ Course - Delete (Admin)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/courses/{{courseId}}",
+          "host": ["{{base_url}}"],
+          "path": ["courses", "{{courseId}}"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test(\"Course deleted successfully\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.message).to.include('deleted successfully');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "❌ Error - Invalid ID Format",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/courses/invalid-id",
+          "host": ["{{base_url}}"],
+          "path": ["courses", "invalid-id"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.test(\"Error message is relevant\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.message).to.include('Invalid course ID format');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "❌ Error - Not Found",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/courses/507f1f77bcf86cd799999999",
+          "host": ["{{base_url}}"],
+          "path": ["courses", "507f1f77bcf86cd799999999"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "pm.test(\"Error message is relevant\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.message).to.include('not found');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "❌ Error - No Auth Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"courseName\": \"Test Course\",\n  \"description\": \"Test description for course\",\n  \"level\": \"Beginner\",\n  \"price\": 49.99\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/courses",
+          "host": ["{{base_url}}"],
+          "path": ["courses"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 401 Unauthorized\", function () {",
+              "    pm.response.to.have.status(401);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "courseId",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
