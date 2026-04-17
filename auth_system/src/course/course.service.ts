@@ -32,8 +32,9 @@ export class CourseService {
 
       return newCourse.toObject();
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       throw new InternalServerErrorException(
-        `Failed to create course: ${error.message}`,
+        `Failed to create course: ${message}`,
       );
     }
   }
@@ -52,8 +53,9 @@ export class CourseService {
 
       return courses;
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       throw new InternalServerErrorException(
-        `Failed to fetch courses: ${error.message}`,
+        `Failed to fetch courses: ${message}`,
       );
     }
   }
@@ -85,8 +87,9 @@ export class CourseService {
       if (error instanceof NotFoundException) {
         throw error;
       }
+      const message = error instanceof Error ? error.message : String(error);
       throw new InternalServerErrorException(
-        `Failed to fetch course: ${error.message}`,
+        `Failed to fetch course: ${message}`,
       );
     }
   }
@@ -146,8 +149,9 @@ export class CourseService {
       ) {
         throw error;
       }
+      const message = error instanceof Error ? error.message : String(error);
       throw new InternalServerErrorException(
-        `Failed to update course: ${error.message}`,
+        `Failed to update course: ${message}`,
       );
     }
   }
@@ -188,8 +192,9 @@ export class CourseService {
       ) {
         throw error;
       }
+      const message = error instanceof Error ? error.message : String(error);
       throw new InternalServerErrorException(
-        `Failed to delete course: ${error.message}`,
+        `Failed to delete course: ${message}`,
       );
     }
   }
