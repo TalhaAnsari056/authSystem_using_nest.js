@@ -32,12 +32,12 @@
           "script": {
             "exec": [
               "var jsonData = pm.response.json();",
-              "pm.environment.set(\"token\", jsonData.access_token);",
+              "pm.environment.set(\"token\", jsonData.data.access_token);",
               "pm.test(\"Status code is 201\", function () {",
               "    pm.response.to.have.status(201);",
               "});",
               "pm.test(\"Token exists\", function () {",
-              "    pm.expect(jsonData).to.have.property('access_token');",
+              "    pm.expect(jsonData.data).to.have.property('access_token');",
               "});"
             ]
           }
@@ -70,8 +70,8 @@
               "});",
               "pm.test(\"Response has user data\", function () {",
               "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('id');",
-              "    pm.expect(jsonData).to.have.property('username');",
+              "    pm.expect(jsonData.data).to.have.property('id');",
+              "    pm.expect(jsonData.data).to.have.property('username');",
               "});"
             ]
           }
@@ -145,7 +145,7 @@
               "});",
               "pm.test(\"Response has count\", function () {",
               "    var jsonData = pm.response.json();",
-              "    pm.expect(jsonData).to.have.property('count');",
+              "    pm.expect(jsonData.data).to.have.property('count');",
               "});",
               "pm.test(\"Response is array\", function () {",
               "    var jsonData = pm.response.json();",

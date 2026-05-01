@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "6.0",
+    "ignoreDeprecations": "5.0",
     // "module": "commonjs",
     // "moduleResolution": "node",
     // "resolvePackageJsonExports": false,
@@ -23,12 +23,6 @@
     //     "src/*"
     //   ]
     // },
-    "baseUrl": "./",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,

@@ -148,6 +148,10 @@ export class AuthService {
 
         const updatedUser = await this.userService.promoteToAdmin(targetUserId);
         
+        if (!updatedUser) {
+            throw new BadRequestException('User not found or could not be promoted');
+        }
+        
         console.log(`User "${user.username}" promoted to admin by another admin`);
         return {
             message: `User "${updatedUser.username}" has been promoted to admin role`,

@@ -7,8 +7,8 @@ import { PromoteUserDto } from './dto/promote-user.dto';
 import { AuthGuard } from './auth.guard';
 import { RolesGuard } from './roles.guard';
 import { Roles } from './roles.decorator';
-import { Role } from 'schemas/user.types';
-import { UserService } from 'src/user/user.service';
+import { Role } from '../../schemas/user.types';
+import { UserService } from '../user/user.service';
 
 @Controller('auth')
 export class AuthController {
